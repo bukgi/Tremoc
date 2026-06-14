@@ -31,7 +31,7 @@ const ProductCard = ({ product, index }) => {
 
   return (
     <div
-      className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 group border border-border/50 animate-slideUp relative"
+      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 group border border-border/50 animate-slideUp relative"
       style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'both' }}
     >
       {/* Toast thông báo */}
@@ -186,39 +186,63 @@ const HomePage = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-mint-light via-white to-mint overflow-hidden">
-        <div className="absolute inset-0 opacity-30">
+      <section className="relative bg-gradient-to-br from-mint-light via-cream to-mint overflow-hidden">
+        <div className="absolute inset-0 opacity-40">
           <div className="absolute top-20 left-10 w-72 h-72 bg-forest/10 rounded-full blur-3xl animate-float" />
-          <div className="absolute bottom-10 right-20 w-96 h-96 bg-forest/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
+          <div className="absolute bottom-10 right-20 w-96 h-96 bg-bamboo/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
         </div>
         <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-forest/10 rounded-full px-4 py-2 mb-6 animate-fadeIn">
-              <Leaf size={16} className="text-forest" />
-              <span className="text-sm font-medium text-forest">Thân thiện môi trường 100%</span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left: Text */}
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 bg-forest/10 rounded-full px-4 py-2 mb-6 animate-fadeIn">
+                <Leaf size={16} className="text-forest" />
+                <span className="text-sm font-medium text-forest">Thân thiện môi trường 100%</span>
+              </div>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-dark leading-tight mb-6 animate-slideUp">
+                {banner.title}
+                <span className="text-forest block mt-1">{banner.highlightTitle}</span>
+              </h1>
+              <p className="text-lg text-muted max-w-xl mx-auto lg:mx-0 mb-8 animate-slideUp" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
+                {banner.description}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-slideUp" style={{ animationDelay: '400ms', animationFillMode: 'both' }}>
+                <Link
+                  to={banner.link}
+                  className="inline-flex items-center justify-center gap-2 bg-forest hover:bg-forest-dark text-white font-semibold px-8 py-3.5 rounded-full transition-all duration-200 hover:shadow-xl hover:shadow-forest/25 active:scale-[0.98]"
+                  id="hero-cta"
+                >
+                  {banner.ctaText}
+                  <ArrowRight size={18} />
+                </Link>
+                <Link
+                  to="/about"
+                  className="inline-flex items-center justify-center gap-2 border-2 border-forest text-forest font-semibold px-8 py-3.5 rounded-full hover:bg-forest/5 transition-all duration-200"
+                >
+                  Câu chuyện của chúng tôi
+                </Link>
+              </div>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-dark leading-tight mb-6 animate-slideUp">
-              {banner.title}
-              <span className="text-forest block mt-1">{banner.highlightTitle}</span>
-            </h1>
-            <p className="text-lg text-muted max-w-2xl mx-auto mb-8 animate-slideUp" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
-              {banner.description}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slideUp" style={{ animationDelay: '400ms', animationFillMode: 'both' }}>
-              <Link
-                to={banner.link}
-                className="inline-flex items-center justify-center gap-2 bg-forest hover:bg-forest-dark text-white font-semibold px-8 py-3.5 rounded-xl transition-all duration-200 hover:shadow-xl hover:shadow-forest/25 active:scale-[0.98]"
-                id="hero-cta"
-              >
-                {banner.ctaText}
-                <ArrowRight size={18} />
-              </Link>
-              <Link
-                to="/about"
-                className="inline-flex items-center justify-center gap-2 border-2 border-forest text-forest font-semibold px-8 py-3.5 rounded-xl hover:bg-forest/5 transition-all duration-200"
-              >
-                Câu chuyện của chúng tôi
-              </Link>
+
+            {/* Right: Hero Images */}
+            <div className="relative animate-fadeIn" style={{ animationDelay: '300ms', animationFillMode: 'both' }}>
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-forest/15 aspect-[4/5] max-w-md mx-auto lg:max-w-none">
+                <img
+                  src="/images/hero-bamboo.jpg"
+                  alt="Rừng tre xanh"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-forest/40 via-transparent to-transparent" />
+              </div>
+              <div className="absolute -bottom-6 -left-4 sm:left-4 bg-white rounded-2xl p-3 shadow-xl border border-border/50 animate-float">
+                <img src="/images/bamboo_cups.png" alt="Bộ cốc tre" className="w-24 h-24 rounded-xl object-cover" />
+              </div>
+              <div className="absolute -top-4 -right-4 sm:right-4 bg-white rounded-full p-2 shadow-xl border border-border/50 animate-float" style={{ animationDelay: '0.8s' }}>
+                <img src="/images/logo-circle.png" alt="Tre Mộc" className="w-20 h-20 rounded-full object-cover" />
+              </div>
+              <div className="absolute top-1/3 -right-6 hidden sm:block bg-white rounded-2xl p-2 shadow-xl border border-border/50 animate-float" style={{ animationDelay: '1.2s' }}>
+                <img src="/images/bamboo_tea_tray.png" alt="Khay trà tre" className="w-28 h-28 rounded-xl object-cover" />
+              </div>
             </div>
           </div>
         </div>
@@ -315,38 +339,86 @@ const HomePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                emoji: '🎋',
+                image: '/images/bamboo-forest.jpg',
                 title: 'Tre Già Tự Nhiên',
                 desc: 'Tre được thu hoạch đúng độ tuổi trưởng thành (từ 3-5 năm) giúp thớ tre đanh cứng, dẻo dai và không bị cong vênh.'
               },
               {
-                emoji: '🏺',
+                image: '/images/craft-village.jpg',
                 title: 'Hồn Quê Thủ Công',
                 desc: 'Mỗi sản phẩm đều trải qua quá trình gọt giũa tỉ mỉ từ bàn tay tài hoa của các nghệ nhân làng nghề Chương Mỹ, Phú Vinh.'
               },
               {
-                emoji: '🍃',
+                image: '/images/bamboo_tea_tray.png',
                 title: 'Kháng Khuẩn Sáp Ong',
                 desc: 'Không sử dụng sơn màu hoá học. Sản phẩm được xử lý chống ẩm mốc bằng nhiệt lượng cao và đánh bóng bằng sáp ong tự nhiên.'
               },
               {
-                emoji: '🌱',
+                image: '/images/bamboo_toothbrush.png',
                 title: 'Phân Huỷ Sinh Học',
                 desc: 'Sau vòng đời sử dụng hữu ích, sản phẩm tre dễ dàng phân huỷ tự nhiên 100%, không để lại hạt nhựa vi sinh gây độc hại cho Trái Đất.'
               }
             ].map((item, idx) => (
-              <div 
-                key={idx} 
-                className="bg-white rounded-2xl p-6 border border-forest/15 hover:border-forest hover:shadow-xl hover:shadow-forest/5 transition-all duration-300 group"
+              <div
+                key={idx}
+                className="bg-white rounded-2xl overflow-hidden border border-forest/15 hover:border-forest hover:shadow-xl hover:shadow-forest/5 transition-all duration-300 group"
               >
-                <div className="w-12 h-12 rounded-xl bg-forest/5 text-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {item.emoji}
+                <div className="relative h-44 overflow-hidden">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-forest/30 to-transparent" />
                 </div>
-                <h4 className="text-lg font-bold text-slate-dark mb-2 group-hover:text-forest transition-colors">{item.title}</h4>
-                <p className="text-muted text-sm leading-relaxed">{item.desc}</p>
+                <div className="p-6">
+                  <h4 className="text-lg font-bold text-slate-dark mb-2 group-hover:text-forest transition-colors">{item.title}</h4>
+                  <p className="text-muted text-sm leading-relaxed">{item.desc}</p>
+                </div>
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Image Gallery */}
+      <section className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+        <div className="text-center mb-12">
+          <span className="text-xs font-bold text-forest uppercase bg-forest/10 px-3 py-1.5 rounded-full tracking-wider">Bộ sưu tập</span>
+          <h2 className="text-3xl lg:text-4xl font-bold text-slate-dark mt-4 mb-3">Khoảnh Khắc Sống Xanh</h2>
+          <p className="text-muted text-lg max-w-xl mx-auto">Những hình ảnh về sản phẩm tre và lối sống bền vững cùng Tre Mộc</p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          {[
+            { src: '/images/lookbook-tea.jpg', alt: 'Trà chiều', span: 'col-span-2 row-span-2' },
+            { src: '/images/bamboo_cups.png', alt: 'Cốc tre', span: '' },
+            { src: '/images/bamboo_lamp.png', alt: 'Đèn tre', span: '' },
+            { src: '/images/lookbook-desk.jpg', alt: 'Bàn làm việc', span: '' },
+            { src: '/images/bamboo_organizer.png', alt: 'Hộp bút tre', span: '' },
+            { src: '/images/lookbook-kitchen.jpg', alt: 'Nhà bếp xanh', span: 'col-span-2' },
+          ].map((img, i) => (
+            <div
+              key={img.alt}
+              className={`relative overflow-hidden rounded-2xl group ${img.span} ${img.span.includes('row-span') ? 'aspect-square md:aspect-auto md:min-h-[320px]' : 'aspect-square'}`}
+              style={{ animationDelay: `${i * 80}ms` }}
+            >
+              <img
+                src={img.src}
+                alt={img.alt}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-forest/0 group-hover:bg-forest/20 transition-colors duration-300" />
+            </div>
+          ))}
+        </div>
+        <div className="text-center mt-10">
+          <Link
+            to="/lookbook"
+            className="inline-flex items-center gap-2 bg-forest hover:bg-forest-dark text-white font-semibold px-8 py-3 rounded-full transition-all hover:shadow-lg hover:shadow-forest/20"
+          >
+            Xem Lookbook
+            <ArrowRight size={18} />
+          </Link>
         </div>
       </section>
 

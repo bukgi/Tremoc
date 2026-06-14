@@ -102,7 +102,7 @@ const RegisterModal = () => {
 
         {/* Logo */}
         <div className="text-center mb-6 flex flex-col items-center">
-          <img src="/images/logo-color.png" alt="Tre Mộc Logo" className="h-12 w-auto object-contain mb-3" />
+          <img src="/images/logo-circle.png" alt="Tre Mộc Logo" className="h-20 w-20 rounded-full object-cover ring-2 ring-forest/10 mb-3" />
           <h2 className="text-xl font-semibold text-slate-dark">Tạo tài khoản mới</h2>
           <p className="text-muted text-sm mt-1">Tham gia cùng cộng đồng xanh!</p>
         </div>

@@ -10,7 +10,7 @@ const initialPosts = [
     date: '10/06/2025',
     category: 'Môi trường',
     readTime: '5 phút đọc',
-    emoji: '🌿'
+    image: '/images/blog-eco.jpg'
   },
   {
     id: 2,
@@ -19,7 +19,7 @@ const initialPosts = [
     date: '05/06/2025',
     category: 'Hướng dẫn',
     readTime: '4 phút đọc',
-    emoji: '🧹'
+    image: '/images/blog-care.jpg'
   },
   {
     id: 3,
@@ -28,7 +28,7 @@ const initialPosts = [
     date: '01/06/2025',
     category: 'Câu chuyện',
     readTime: '7 phút đọc',
-    emoji: '🎋'
+    image: '/images/blog-village.jpg'
   },
   {
     id: 4,
@@ -37,21 +37,27 @@ const initialPosts = [
     date: '25/05/2025',
     category: 'Xu hướng',
     readTime: '6 phút đọc',
-    emoji: '🌱'
+    image: '/images/blog-trend.jpg'
   },
 ];
 
 const BlogPage = () => {
   const [posts, setPosts] = useState(() => {
     const saved = localStorage.getItem('tremoc_blogs');
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return parsed.map((post, i) => ({ ...post, image: post.image || initialPosts[i]?.image }));
+    }
     localStorage.setItem('tremoc_blogs', JSON.stringify(initialPosts));
     return initialPosts;
   });
 
   useEffect(() => {
     const saved = localStorage.getItem('tremoc_blogs');
-    if (saved) setPosts(JSON.parse(saved));
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setPosts(parsed.map((post, i) => ({ ...post, image: post.image || initialPosts[i]?.image })));
+    }
   }, []);
 
   return (
@@ -76,8 +82,13 @@ const BlogPage = () => {
             className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group animate-slideUp"
             style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'both' }}
           >
-            <div className="h-48 bg-gradient-to-br from-mint to-mint-light flex items-center justify-center text-7xl group-hover:scale-105 transition-transform duration-500">
-              {post.emoji}
+            <div className="h-52 overflow-hidden relative">
+              <img
+                src={post.image}
+                alt={post.title}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-forest/30 to-transparent" />
             </div>
             <div className="p-6">
               <div className="flex items-center gap-3 mb-3">

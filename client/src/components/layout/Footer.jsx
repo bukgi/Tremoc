@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Leaf, MapPin, Phone, Mail, MessageCircle, Camera, Play } from 'lucide-react';
+import { MapPin, Phone, Mail, MessageCircle, Camera, Play } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -9,11 +9,16 @@ const Footer = () => {
 
           {/* Brand Column */}
           <div className="lg:col-span-1">
-            <Link to="/" className="inline-flex items-center gap-2 mb-4">
-              <div className="bg-forest/20 p-1.5 rounded-lg">
-                <Leaf className="text-forest-light" size={22} />
+            <Link to="/" className="inline-flex items-center gap-3 mb-4 group">
+              <img
+                src="/images/logo-circle.png"
+                alt="Tre Mộc"
+                className="h-16 w-16 rounded-full object-cover ring-2 ring-white/20 group-hover:ring-forest-light/50 transition-all"
+              />
+              <div>
+                <span className="text-xl font-bold text-white block">TRE MỘC</span>
+                <span className="text-[10px] text-gray-400 uppercase tracking-widest">Nghệ thuật tiêu dùng xanh</span>
               </div>
-              <span className="text-xl font-bold text-white">Tre Mộc</span>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-4">
               Sản phẩm tre thân thiện môi trường, chế tác thủ công từ làng nghề Việt Nam. Mỗi sản phẩm là một câu chuyện về sự bền vững.

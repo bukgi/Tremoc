@@ -19,11 +19,19 @@ const ContactPage = () => {
   };
 
   return (
+    <div>
+      <section className="relative h-48 md:h-56 overflow-hidden">
+        <img src="/images/craft-village.jpg" alt="Liên hệ Tre Mộc" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-forest/50 flex items-center justify-center">
+          <div className="text-center text-white animate-fadeIn">
+            <img src="/images/logo-circle.png" alt="Tre Mộc" className="w-14 h-14 rounded-full mx-auto mb-3 ring-2 ring-white/40" />
+            <h1 className="text-3xl lg:text-4xl font-bold mb-2">Liên hệ</h1>
+            <p className="text-white/90">Chúng tôi luôn sẵn sàng hỗ trợ bạn</p>
+          </div>
+        </div>
+      </section>
+
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-      <div className="text-center mb-12 animate-fadeIn">
-        <h1 className="text-3xl lg:text-4xl font-bold text-slate-dark mb-3">Liên hệ</h1>
-        <p className="text-muted text-lg">Chúng tôi luôn sẵn sàng hỗ trợ bạn</p>
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
         {/* Left: Contact Info */}
@@ -140,6 +148,7 @@ const ContactPage = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

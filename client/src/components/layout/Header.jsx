@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { ShoppingCart, Leaf, Menu, X, User, LogOut, Package, ChevronDown, LayoutDashboard } from 'lucide-react';
+import { ShoppingCart, Menu, X, User, LogOut, Package, ChevronDown, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 
@@ -51,17 +51,21 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white/95 backdrop-blur-md border-b border-border sticky top-0 z-40 transition-all duration-300">
+    <header className="bg-cream/95 backdrop-blur-md border-b border-border sticky top-0 z-40 transition-all duration-300 shadow-sm shadow-forest/5">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 lg:h-24">
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group" id="header-logo">
-            <img 
-              src="/images/logo-color.png" 
-              alt="Tre Mộc Logo" 
-              className="h-14 w-auto object-contain transition-all duration-300 group-hover:scale-105" 
+          <Link to="/" className="flex items-center gap-3 group" id="header-logo">
+            <img
+              src="/images/logo-circle.png"
+              alt="Tre Mộc Logo"
+              className="h-14 w-14 rounded-full object-cover ring-2 ring-forest/10 transition-all duration-300 group-hover:scale-105 group-hover:ring-forest/25"
             />
+            <div className="hidden sm:block">
+              <p className="text-lg font-bold text-forest leading-tight tracking-wide">TRE MỘC</p>
+              <p className="text-[10px] font-medium text-muted uppercase tracking-widest">Nghệ thuật tiêu dùng xanh</p>
+            </div>
           </Link>
 
           {/* Desktop Nav */}

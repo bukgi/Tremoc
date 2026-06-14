@@ -55,7 +55,7 @@ const LoginModal = () => {
 
         {/* Logo */}
         <div className="text-center mb-6 flex flex-col items-center">
-          <img src="/images/logo-color.png" alt="Tre Mộc Logo" className="h-12 w-auto object-contain mb-3" />
+          <img src="/images/logo-circle.png" alt="Tre Mộc Logo" className="h-20 w-20 rounded-full object-cover ring-2 ring-forest/10 mb-3" />
           <h2 className="text-xl font-semibold text-slate-dark">Đăng nhập tài khoản</h2>
           <p className="text-muted text-sm mt-1">Chào mừng bạn trở lại!</p>
         </div>

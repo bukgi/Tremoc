@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  --color-forest: #008744;
-  --color-forest-dark: #00733B;
-  --color-forest-light: #00a854;
-  --color-mint: #E8F5E9;
-  --color-mint-light: #F1F8F5;
-  --color-slate-dark: #1A2B32;
-  --color-muted: #666666;
-  --color-muted-light: #999999;
-  --color-border: #E5E7EB;
-  --color-bg-off: #F8F9FA;
+  --color-forest: #4A6741;
+  --color-forest-dark: #3A5233;
+  --color-forest-light: #5C7A52;
+  --color-mint: #E8EDE3;
+  --color-mint-light: #F5F0E8;
+  --color-cream: #FAF7F2;
+  --color-bamboo: #C4A882;
+  --color-slate-dark: #2C3E2D;
+  --color-muted: #6B7280;
+  --color-muted-light: #9CA3AF;
+  --color-border: #E8E4DC;
+  --color-bg-off: #F5F0E8;
   --font-family-sans: 'Be Vietnam Pro', system-ui, sans-serif;
 }
 
@@ -22,7 +24,7 @@ html {
 body {
   font-family: var(--font-family-sans);
   color: var(--color-slate-dark);
-  background-color: #ffffff;
+  background-color: var(--color-cream);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
