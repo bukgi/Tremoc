@@ -1,0 +1,6 @@
+@TreMoc_HostAddress = http://localhost:5065
+
+GET {{TreMoc_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
