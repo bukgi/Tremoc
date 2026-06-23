@@ -17,4 +17,14 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <!-- Include React frontend build output in publish -->
+  <ItemGroup>
+    <Content Include="client\dist\**\*" CopyToPublishDirectory="PreserveNewest" LinkBase="client\dist\" />
+  </ItemGroup>
+
+  <!-- Exclude development files from publish -->
+  <ItemGroup>
+    <Content Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+
 </Project>

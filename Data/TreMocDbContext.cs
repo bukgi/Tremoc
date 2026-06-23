@@ -58,8 +58,14 @@ namespace TreMoc.Data
                     Category = "Đồ gia dụng",
                     Price = 195000,
                     Description = "Bộ 4 cốc tre thủ công, mỗi chiếc đều là tác phẩm độc đáo. Dung tích 250ml, an toàn cho sức khỏe.",
-                    Image = "/images/bamboo_cups.png",
-                    ImagesJson = System.Text.Json.JsonSerializer.Serialize(new[] { "/images/bamboo_cups.png", "/images/bamboo_tea_tray.png", "/images/bamboo_cutting_board.png" }),
+                    Image = "/images/products/cup_logo.jpg",
+                    ImagesJson = System.Text.Json.JsonSerializer.Serialize(new[] { 
+                        "/images/products/cup_logo.jpg", 
+                        "/images/products/cup_plain.jpg", 
+                        "/images/products/cup_bottom.jpg", 
+                        "/images/products/cup_close.jpg", 
+                        "/images/products/cup_logo_2.jpg" 
+                    }),
                     ImpactPlastic = "80g",
                     ImpactCo2 = "40g",
                     ImpactWater = "200ml",

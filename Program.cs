@@ -12,9 +12,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<TreMocDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 2. JWT Settings
+// 2. JWT Settings (hỗ trợ override bằng biến môi trường)
+var jwtKey = builder.Configuration["JwtSettings:Key"] ?? "ThisIsASecretKeyForTreMocApplicationWhichNeedsToBeAtLeast32BytesLong!";
+var jwtIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "TreMocApp";
+var jwtAudience = builder.Configuration["JwtSettings:Audience"] ?? "TreMocUsers";
+
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
-var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
 
 // 3. Authentication & Authorization
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -26,20 +29,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings?.Issuer,
-            ValidAudience = jwtSettings?.Audience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings?.Key ?? ""))
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
         };
     });
 builder.Services.AddAuthorization();
 
-// 4. CORS
+// 4. CORS (cấu hình qua appsettings.json hoặc biến môi trường Cors__Origins)
+var corsOrigins = builder.Configuration["Cors:Origins"] ?? "http://localhost:5173";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactFrontend",
-        builder =>
+        policy =>
         {
-            builder.WithOrigins("http://localhost:5173")
+            policy.WithOrigins(corsOrigins.Split(';', StringSplitOptions.RemoveEmptyEntries))
                    .AllowAnyHeader()
                    .AllowAnyMethod();
         });
@@ -58,8 +62,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    // Chỉ redirect HTTPS ở production (development dùng Vite proxy qua HTTP)
+    app.UseHttpsRedirection();
+}
 
-app.UseHttpsRedirection();
+// Serve uploaded images from wwwroot
+app.UseStaticFiles();
 
 // Serve the React frontend from client/dist
 app.UseDefaultFiles();
@@ -98,6 +108,21 @@ using (var scope = app.Services.CreateScope())
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"),
             Role = "Manager",
             CreatedAt = DateTime.UtcNow
+        });
+        context.SaveChanges();
+    }
+
+    // Cập nhật sản phẩm có sẵn trong Database với hình ảnh mới
+    var cupProduct = context.Products.FirstOrDefault(p => p.Id == 2);
+    if (cupProduct != null)
+    {
+        cupProduct.Image = "/images/products/cup_logo.jpg";
+        cupProduct.ImagesJson = System.Text.Json.JsonSerializer.Serialize(new[] {
+            "/images/products/cup_logo.jpg",
+            "/images/products/cup_plain.jpg",
+            "/images/products/cup_bottom.jpg",
+            "/images/products/cup_close.jpg",
+            "/images/products/cup_logo_2.jpg"
         });
         context.SaveChanges();
     }

@@ -31,6 +31,7 @@ namespace TreMoc.Controllers
             public decimal Subtotal { get; set; }
             public decimal ShippingFee { get; set; }
             public string Province { get; set; } = string.Empty;
+            public string Address { get; set; } = string.Empty;
             public List<OrderItemRequest> Items { get; set; } = new();
         }
 
@@ -54,15 +55,63 @@ namespace TreMoc.Controllers
                 id = o.Id,
                 date = o.OrderDate,
                 total = o.TotalAmount,
+                shippingFee = o.ShippingFee,
                 status = o.Status,
                 shippingProvince = o.ShippingProvince,
+                shippingAddress = o.ShippingAddress,
                 items = o.OrderItems.Select(oi => new {
+                    id = oi.ProductId,
                     name = oi.Product?.Name,
                     image = oi.Product?.Image,
                     quantity = oi.Quantity,
                     price = oi.UnitPrice
                 })
             });
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrderDetail(int id)
+        {
+            if (!UserClaimsHelper.TryGetUserId(User, out int userId))
+                return Unauthorized();
+
+            var isManager = User.IsInRole("Manager");
+
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .Include(o => o.User)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+                return NotFound(new { message = "Không tìm thấy đơn hàng." });
+
+            if (!isManager && order.UserId != userId)
+                return Forbid();
+
+            var result = new
+            {
+                id = order.Id,
+                date = order.OrderDate,
+                total = order.TotalAmount,
+                shippingFee = order.ShippingFee,
+                status = order.Status,
+                shippingProvince = order.ShippingProvince,
+                shippingAddress = order.ShippingAddress,
+                customerName = order.User?.Name ?? "Khách vãng lai",
+                customerEmail = order.User?.Email ?? "N/A",
+                customerPhone = order.User?.Phone ?? "N/A",
+                items = order.OrderItems.Select(oi => new
+                {
+                    id = oi.ProductId,
+                    name = oi.Product?.Name,
+                    image = oi.Product?.Image,
+                    quantity = oi.Quantity,
+                    price = oi.UnitPrice
+                })
+            };
 
             return Ok(result);
         }
@@ -120,6 +169,7 @@ namespace TreMoc.Controllers
                     TotalAmount = request.Subtotal + request.ShippingFee,
                     ShippingFee = request.ShippingFee,
                     ShippingProvince = request.Province,
+                    ShippingAddress = request.Address ?? request.Province,
                     Status = "Pending",
                     OrderDate = DateTime.UtcNow
                 };
@@ -163,11 +213,15 @@ namespace TreMoc.Controllers
                 id = o.Id,
                 date = o.OrderDate,
                 total = o.TotalAmount,
+                shippingFee = o.ShippingFee,
                 status = o.Status,
                 shippingProvince = o.ShippingProvince,
+                shippingAddress = o.ShippingAddress,
                 customerName = o.User?.Name ?? "Khách vãng lai",
                 customerEmail = o.User?.Email ?? "N/A",
+                customerPhone = o.User?.Phone ?? "N/A",
                 items = o.OrderItems.Select(oi => new {
+                    id = oi.ProductId,
                     name = oi.Product?.Name,
                     image = oi.Product?.Image,
                     quantity = oi.Quantity,

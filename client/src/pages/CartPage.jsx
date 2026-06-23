@@ -1,25 +1,43 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Trash2, ShoppingBag, ArrowLeft, Truck, Info, CheckCircle, AlertCircle, XCircle, Loader2 } from 'lucide-react';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import { formatPrice, provinces } from '../data/mockData';
-import QuantityPicker from '../components/ui/QuantityPicker';
-import { apiFetch, getAuthToken, readJson } from '../lib/api';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Trash2,
+  ShoppingBag,
+  ArrowLeft,
+  Truck,
+  Info,
+  CheckCircle,
+  AlertCircle,
+  XCircle,
+  Loader2,
+  MapPin,
+} from "lucide-react";
+import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+import { formatPrice } from "../data/mockData";
+import QuantityPicker from "../components/ui/QuantityPicker";
+import AddressAutocomplete from "../components/ui/AddressAutocomplete";
+import { apiFetch, getAuthToken, readJson } from "../lib/api";
 
 // Toast component nhỏ gọn
 const Toast = ({ toast, onClose }) => {
   if (!toast) return null;
   return (
-    <div className={`fixed top-6 right-6 z-50 flex items-start gap-3 px-5 py-4 rounded-xl shadow-2xl text-white font-medium text-sm max-w-sm animate-slideUp ${
-      toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'
-    }`}>
-      {toast.type === 'success'
-        ? <CheckCircle size={20} className="shrink-0 mt-0.5" />
-        : <AlertCircle size={20} className="shrink-0 mt-0.5" />
-      }
+    <div
+      className={`fixed top-6 right-6 z-50 flex items-start gap-3 px-5 py-4 rounded-xl shadow-2xl text-white font-medium text-sm max-w-sm animate-slideUp ${
+        toast.type === "success" ? "bg-green-500" : "bg-red-500"
+      }`}
+    >
+      {toast.type === "success" ? (
+        <CheckCircle size={20} className="shrink-0 mt-0.5" />
+      ) : (
+        <AlertCircle size={20} className="shrink-0 mt-0.5" />
+      )}
       <span className="flex-1">{toast.message}</span>
-      <button onClick={onClose} className="opacity-80 hover:opacity-100 shrink-0">
+      <button
+        onClick={onClose}
+        className="opacity-80 hover:opacity-100 shrink-0"
+      >
         <XCircle size={16} />
       </button>
     </div>
@@ -27,10 +45,11 @@ const Toast = ({ toast, onClose }) => {
 };
 
 const CartPage = () => {
-  const { items, updateQuantity, removeFromCart, subtotal, clearCart } = useCart();
+  const { items, updateQuantity, removeFromCart, subtotal, clearCart } =
+    useCart();
   const { logout, openLogin } = useAuth();
-  const [selectedProvince, setSelectedProvince] = useState('');
-  const [shippingFee, setShippingFee] = useState(null);
+  const [shippingAddress, setShippingAddress] = useState("");
+  const [shippingProvince, setShippingProvince] = useState("");
   const [placing, setPlacing] = useState(false);
   const [toast, setToast] = useState(null);
   const navigate = useNavigate();
@@ -38,70 +57,100 @@ const CartPage = () => {
   const freeShippingThreshold = 500000;
   const remainingForFreeShipping = freeShippingThreshold - subtotal;
 
+  // Danh sách tỉnh nội thành (phí ship rẻ hơn)
+  const innerCityProvinces = [
+    "Hà Nội",
+    "TP. Hồ Chí Minh",
+    "TP Hồ Chí Minh",
+    "Đà Nẵng",
+    "Hải Phòng",
+    "Cần Thơ",
+    "hà nội",
+    "hồ chí minh",
+    "đà nẵng",
+    "hải phòng",
+    "cần thơ",
+  ];
+
+  // Tự động tính phí ship từ địa chỉ
+  const getShippingFee = (address) => {
+    if (!address) return null;
+    if (subtotal >= freeShippingThreshold) return 0;
+    const lower = address.toLowerCase();
+    const isInnerCity = innerCityProvinces.some((city) =>
+      lower.includes(city.toLowerCase()),
+    );
+    return isInnerCity ? 20000 : 35000;
+  };
+
+  const total = subtotal + (getShippingFee(shippingAddress) || 0);
+
   const showToast = (type, message) => {
     setToast({ type, message });
     setTimeout(() => setToast(null), 4000);
   };
 
-  const calculateShipping = () => {
-    if (!selectedProvince) return;
-    if (subtotal >= freeShippingThreshold) {
-      setShippingFee(0);
-    } else {
-      setShippingFee(selectedProvince === 'Hà Nội' ? 20000 : 35000);
-    }
-  };
-
-  const total = subtotal + (shippingFee || 0);
-
   const handlePlaceOrder = async () => {
     const token = getAuthToken();
     if (!token) {
-      showToast('error', 'Vui lòng đăng nhập để đặt hàng!');
+      showToast("error", "Vui lòng đăng nhập để đặt hàng!");
       setTimeout(() => openLogin(), 300);
       return;
     }
 
-    if (!selectedProvince) {
-      showToast('error', 'Vui lòng chọn tỉnh/thành phố và tính phí vận chuyển trước!');
-      return;
-    }
-
-    if (shippingFee === null) {
-      showToast('error', 'Vui lòng bấm "Tính phí vận chuyển" trước khi đặt hàng!');
+    if (!shippingAddress || shippingAddress.trim().length < 5) {
+      showToast("error", "Vui lòng nhập địa chỉ giao hàng đầy đủ!");
       return;
     }
 
     setPlacing(true);
     try {
-      const res = await apiFetch('/api/orders', {
-        method: 'POST',
+      const shippingFee = getShippingFee(shippingAddress);
+      const res = await apiFetch("/api/orders", {
+        method: "POST",
         body: JSON.stringify({
           subtotal,
           shippingFee: shippingFee || 0,
-          province: selectedProvince,
-          items: items.map(i => ({ productId: i.id, quantity: i.quantity, price: i.price }))
-        })
+          province: shippingProvince || shippingAddress,
+          address: shippingAddress,
+          items: items.map((i) => ({
+            productId: i.id,
+            quantity: i.quantity,
+            price: i.price,
+          })),
+        }),
       });
 
       const data = await readJson(res);
 
       if (res.ok) {
         clearCart();
-        showToast('success', `Đặt hàng thành công! Mã đơn hàng: #${data.orderId}`);
-        setTimeout(() => navigate('/orders'), 2000);
+        showToast(
+          "success",
+          `Đặt hàng thành công! Mã đơn hàng: #${data.orderId}`,
+        );
+        setTimeout(() => navigate("/orders"), 2000);
       } else if (res.status === 409) {
         // Hết hàng hoặc không đủ số lượng
-        showToast('error', data.message || 'Sản phẩm không đủ số lượng trong kho.');
+        showToast(
+          "error",
+          data.message || "Sản phẩm không đủ số lượng trong kho.",
+        );
       } else if (res.status === 401) {
-        showToast('error', 'Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại rồi bấm đặt hàng một lần nữa.');
+        showToast(
+          "error",
+          "Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại rồi bấm đặt hàng một lần nữa.",
+        );
         logout();
         setTimeout(() => openLogin(), 500);
       } else {
-        showToast('error', data.message || 'Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại.');
+        showToast(
+          "error",
+          data.message || "Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại.",
+        );
       }
     } catch (err) {
-      showToast('error', 'Lỗi kết nối tới server. Kiểm tra lại kết nối mạng.');
+      showToast("error", "Lỗi kết nối tới server. Kiểm tra lại kết nối mạng.");
     } finally {
       setPlacing(false);
     }
@@ -114,8 +163,12 @@ const CartPage = () => {
         <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-mint flex items-center justify-center">
           <ShoppingBag size={36} className="text-forest" />
         </div>
-        <h1 className="text-2xl font-bold text-slate-dark mb-3">Giỏ hàng trống</h1>
-        <p className="text-muted mb-8">Bạn chưa có sản phẩm nào trong giỏ hàng</p>
+        <h1 className="text-2xl font-bold text-slate-dark mb-3">
+          Giỏ hàng trống
+        </h1>
+        <p className="text-muted mb-8">
+          Bạn chưa có sản phẩm nào trong giỏ hàng
+        </p>
         <Link
           to="/"
           className="inline-flex items-center gap-2 bg-forest hover:bg-forest-dark text-white font-semibold px-8 py-3 rounded-xl transition-all"
@@ -131,7 +184,9 @@ const CartPage = () => {
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
       <Toast toast={toast} onClose={() => setToast(null)} />
 
-      <h1 className="text-3xl font-bold text-slate-dark mb-8 animate-fadeIn">Giỏ hàng</h1>
+      <h1 className="text-3xl font-bold text-slate-dark mb-8 animate-fadeIn">
+        Giỏ hàng
+      </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Cart Items */}
@@ -144,22 +199,37 @@ const CartPage = () => {
               <div
                 key={item.id}
                 className={`bg-white rounded-xl border p-4 sm:p-6 flex flex-col sm:flex-row gap-4 items-start animate-slideUp ${
-                  isOverStock ? 'border-red-200 bg-red-50/30' : 'border-border'
+                  isOverStock ? "border-red-200 bg-red-50/30" : "border-border"
                 }`}
-                style={{ animationDelay: `${index * 80}ms`, animationFillMode: 'both' }}
+                style={{
+                  animationDelay: `${index * 80}ms`,
+                  animationFillMode: "both",
+                }}
               >
                 {/* Image */}
-                <Link to={`/product/${item.id}`} className="w-24 h-24 rounded-xl overflow-hidden bg-bg-off shrink-0">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
+                <Link
+                  to={`/product/${item.id}`}
+                  className="w-24 h-24 rounded-xl overflow-hidden bg-bg-off shrink-0"
+                >
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                  />
                 </Link>
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <Link to={`/product/${item.id}`} className="text-base font-semibold text-slate-dark hover:text-forest transition-colors">
+                  <Link
+                    to={`/product/${item.id}`}
+                    className="text-base font-semibold text-slate-dark hover:text-forest transition-colors"
+                  >
                     {item.name}
                   </Link>
                   <p className="text-sm text-muted mt-0.5">{item.category}</p>
-                  <p className="text-lg font-bold text-forest mt-2">{formatPrice(item.price)}</p>
+                  <p className="text-lg font-bold text-forest mt-2">
+                    {formatPrice(item.price)}
+                  </p>
                   {isOverStock && (
                     <p className="text-xs text-red-600 mt-1 font-medium flex items-center gap-1">
                       <AlertCircle size={12} />
@@ -189,35 +259,50 @@ const CartPage = () => {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6 animate-slideUp" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
-          {/* Shipping Calculator */}
+        <div
+          className="space-y-6 animate-slideUp"
+          style={{ animationDelay: "200ms", animationFillMode: "both" }}
+        >
+          {/* Shipping Address */}
           <div className="bg-white rounded-xl border border-border p-6">
             <div className="flex items-center gap-2 mb-4">
               <Truck size={20} className="text-forest" />
-              <h3 className="font-semibold text-slate-dark">Phí vận chuyển</h3>
+              <h3 className="font-semibold text-slate-dark">
+                Địa chỉ giao hàng
+              </h3>
             </div>
 
-            <select
-              value={selectedProvince}
-              onChange={(e) => { setSelectedProvince(e.target.value); setShippingFee(null); }}
-              className="w-full px-4 py-3 rounded-lg border border-border focus:border-forest focus:ring-2 focus:ring-forest/20 outline-none text-sm mb-3 bg-white"
-              id="shipping-province"
-            >
-              <option value="">Chọn Tỉnh/Thành phố</option>
-              {provinces.map(p => <option key={p} value={p}>{p}</option>)}
-            </select>
+            <AddressAutocomplete
+              onPlaceSelected={(place) => {
+                setShippingAddress(place.address);
+                setShippingProvince(place.province || place.district || "");
+              }}
+              onChange={(val) => {
+                setShippingAddress(val);
+                setShippingProvince("");
+              }}
+              value={shippingAddress}
+              placeholder="Nhập địa chỉ giao hàng (số nhà, tên đường, quận, thành phố)..."
+            />
 
-            <button
-              onClick={calculateShipping}
-              disabled={!selectedProvince}
-              className="w-full py-2.5 text-sm font-medium border border-forest text-forest rounded-lg hover:bg-forest/5 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Tính phí vận chuyển
-            </button>
+            {shippingAddress && shippingAddress.trim().length >= 5 && (
+              <>
+                <p className="text-sm text-forest font-medium mt-3">
+                  {getShippingFee(shippingAddress) === 0
+                    ? "✨ Miễn phí vận chuyển!"
+                    : `Phí vận chuyển: ${formatPrice(getShippingFee(shippingAddress))}`}
+                </p>
+                <p className="text-xs text-muted mt-1 flex items-start gap-1">
+                  <MapPin size={13} className="shrink-0 mt-0.5" />
+                  <span>{shippingAddress}</span>
+                </p>
+              </>
+            )}
 
-            {shippingFee !== null && (
-              <p className="text-sm text-forest font-medium mt-3">
-                {shippingFee === 0 ? '✨ Miễn phí vận chuyển!' : `Phí: ${formatPrice(shippingFee)}`}
+            {(!shippingAddress || shippingAddress.trim().length < 5) && (
+              <p className="text-xs text-muted mt-3">
+                🔍 Nhập địa chỉ và chọn từ gợi ý, hoặc nhấn nút định vị 📌 để
+                dùng vị trí hiện tại.
               </p>
             )}
 
@@ -225,7 +310,9 @@ const CartPage = () => {
               <div className="flex items-start gap-2 mt-4 p-3 bg-amber-50 rounded-lg">
                 <Info size={16} className="text-amber-600 mt-0.5 shrink-0" />
                 <p className="text-xs text-amber-700">
-                  💡 Mua thêm <strong>{formatPrice(remainingForFreeShipping)}</strong> để được miễn phí vận chuyển
+                  💡 Mua thêm{" "}
+                  <strong>{formatPrice(remainingForFreeShipping)}</strong> để
+                  được miễn phí vận chuyển
                 </p>
               </div>
             )}
@@ -233,17 +320,26 @@ const CartPage = () => {
 
           {/* Order Summary */}
           <div className="bg-white rounded-xl border border-border p-6">
-            <h3 className="font-semibold text-slate-dark mb-4">Tóm tắt đơn hàng</h3>
+            <h3 className="font-semibold text-slate-dark mb-4">
+              Tóm tắt đơn hàng
+            </h3>
 
             <div className="space-y-3 mb-4">
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Tạm tính ({items.reduce((s, i) => s + i.quantity, 0)} sản phẩm)</span>
+                <span className="text-muted">
+                  Tạm tính ({items.reduce((s, i) => s + i.quantity, 0)} sản
+                  phẩm)
+                </span>
                 <span className="font-medium">{formatPrice(subtotal)}</span>
               </div>
-              {shippingFee !== null && (
+              {shippingAddress && getShippingFee(shippingAddress) !== null && (
                 <div className="flex justify-between text-sm">
                   <span className="text-muted">Phí vận chuyển</span>
-                  <span className="font-medium">{shippingFee === 0 ? 'Miễn phí' : formatPrice(shippingFee)}</span>
+                  <span className="font-medium">
+                    {getShippingFee(shippingAddress) === 0
+                      ? "Miễn phí"
+                      : formatPrice(getShippingFee(shippingAddress))}
+                  </span>
                 </div>
               )}
             </div>
@@ -251,7 +347,9 @@ const CartPage = () => {
             <div className="border-t border-border pt-4 mb-6">
               <div className="flex justify-between">
                 <span className="font-semibold text-slate-dark">Tổng cộng</span>
-                <span className="text-xl font-bold text-forest">{formatPrice(total)}</span>
+                <span className="text-xl font-bold text-forest">
+                  {formatPrice(total)}
+                </span>
               </div>
             </div>
 
@@ -267,7 +365,7 @@ const CartPage = () => {
                   Đang xử lý...
                 </>
               ) : (
-                'Đặt hàng'
+                "Đặt hàng"
               )}
             </button>
 

@@ -16,8 +16,14 @@ export const products = [
     category: 'Đồ gia dụng',
     price: 195000,
     description: 'Bộ 4 cốc tre thủ công, mỗi chiếc đều là tác phẩm độc đáo. Dung tích 250ml, an toàn cho sức khỏe.',
-    image: '/images/bamboo_cups.png',
-    images: ['/images/bamboo_cups.png', '/images/bamboo_tea_tray.png', '/images/bamboo_cutting_board.png'],
+    image: '/images/products/cup_logo.jpg',
+    images: [
+      '/images/products/cup_logo.jpg',
+      '/images/products/cup_plain.jpg',
+      '/images/products/cup_bottom.jpg',
+      '/images/products/cup_close.jpg',
+      '/images/products/cup_logo_2.jpg'
+    ],
     impact: { plastic: '80g', co2: '40g', water: '200ml' },
     inStock: true,
   },

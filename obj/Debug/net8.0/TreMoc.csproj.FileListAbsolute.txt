@@ -134,5 +134,13 @@ D:\FPT\PRN222\TreMoc\TreMoc\bin\Debug\net8.0\runtimes\win-arm\native\e_sqlite3.d
 D:\FPT\PRN222\TreMoc\TreMoc\bin\Debug\net8.0\runtimes\win-arm64\native\e_sqlite3.dll
 D:\FPT\PRN222\TreMoc\TreMoc\bin\Debug\net8.0\runtimes\win-x64\native\e_sqlite3.dll
 D:\FPT\PRN222\TreMoc\TreMoc\bin\Debug\net8.0\runtimes\win-x86\native\e_sqlite3.dll
-D:\FPT\PRN222\TreMoc\TreMoc\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 D:\FPT\PRN222\TreMoc\TreMoc\obj\Debug\net8.0\TreMoc.sourcelink.json
+D:\FPT\PRN222\TreMoc\TreMoc\bin\Debug\net8.0\publish\web.config
+D:\FPT\PRN222\TreMoc\TreMoc\bin\Debug\net8.0\publish\appsettings.json
+D:\FPT\PRN222\TreMoc\TreMoc\bin\Debug\net8.0\publish\client\package-lock.json
+D:\FPT\PRN222\TreMoc\TreMoc\bin\Debug\net8.0\publish\client\package.json
+D:\FPT\PRN222\TreMoc\TreMoc\bin\Debug\net8.0\publish\TreMoc.deps.json
+D:\FPT\PRN222\TreMoc\TreMoc\bin\Debug\net8.0\publish\TreMoc.runtimeconfig.json
+D:\FPT\PRN222\TreMoc\TreMoc\bin\Debug\net8.0\publish\TreMoc.staticwebassets.endpoints.json
+D:\FPT\PRN222\TreMoc\TreMoc\bin\Debug\net8.0\TreMoc.staticwebassets.runtime.json
+D:\FPT\PRN222\TreMoc\TreMoc\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
