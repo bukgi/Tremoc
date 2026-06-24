@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TreMoc")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6332e50077367a1dfc17138d81c9ebddad267d45")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+637feca9d2fb7bb1a56d74205a1843870808dfe8")]
 [assembly: System.Reflection.AssemblyProductAttribute("TreMoc")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TreMoc")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

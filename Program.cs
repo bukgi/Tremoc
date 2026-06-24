@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TreMoc.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 // 1. Database Context
 builder.Services.AddDbContext<TreMocDbContext>(options =>
@@ -36,7 +35,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddAuthorization();
 
-// 4. CORS (cấu hình qua appsettings.json hoặc biến môi trường Cors__Origins)
+// 4. CORS
 var corsOrigins = builder.Configuration["Cors:Origins"] ?? "http://localhost:5173";
 builder.Services.AddCors(options =>
 {
@@ -50,13 +49,13 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+var clientDist = Path.Combine(builder.Environment.ContentRootPath, "client", "dist");
+var hasClientDist = Directory.Exists(clientDist);
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -64,40 +63,58 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    // Chỉ redirect HTTPS ở production (development dùng Vite proxy qua HTTP)
     app.UseHttpsRedirection();
 }
 
-// Serve uploaded images from wwwroot
+// Ảnh upload trong wwwroot
 app.UseStaticFiles();
 
-// Serve the React frontend from client/dist
-app.UseDefaultFiles();
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
-        Path.Combine(builder.Environment.ContentRootPath, "client", "dist")),
-    RequestPath = ""
-});
-
-// Enable CORS
+app.UseRouting();
 app.UseCors("AllowReactFrontend");
-
 app.UseAuthentication();
 app.UseAuthorization();
 
+// API trước — không để SPA fallback nuốt request /api
 app.MapControllers();
 
-app.MapFallbackToFile("index.html", new StaticFileOptions
+// Frontend React (chỉ phục vụ file tĩnh + fallback cho route SPA)
+if (hasClientDist)
 {
-    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
-        Path.Combine(builder.Environment.ContentRootPath, "client", "dist"))
-});
+    var clientProvider = new PhysicalFileProvider(clientDist);
 
-// Seed Manager User on Startup
+    app.UseDefaultFiles(new DefaultFilesOptions
+    {
+        FileProvider = clientProvider,
+        RequestPath = ""
+    });
+
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = clientProvider,
+        RequestPath = ""
+    });
+
+    app.MapFallback(async context =>
+    {
+        if (context.Request.Path.StartsWithSegments("/api"))
+        {
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            context.Response.ContentType = "application/json; charset=utf-8";
+            await context.Response.WriteAsJsonAsync(new { message = "API endpoint không tồn tại." });
+            return;
+        }
+
+        context.Response.ContentType = "text/html; charset=utf-8";
+        await context.Response.SendFileAsync(Path.Combine(clientDist, "index.html"));
+    });
+}
+
+// Tự tạo DB + seed khi deploy lần đầu
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<TreMocDbContext>();
+    context.Database.Migrate();
+
     if (!context.Users.Any(u => u.Email == "manager@tremoc.vn"))
     {
         context.Users.Add(new TreMoc.Models.User
@@ -112,7 +129,6 @@ using (var scope = app.Services.CreateScope())
         context.SaveChanges();
     }
 
-    // Cập nhật sản phẩm có sẵn trong Database với hình ảnh mới
     var cupProduct = context.Products.FirstOrDefault(p => p.Id == 2);
     if (cupProduct != null)
     {

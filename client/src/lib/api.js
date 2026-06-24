@@ -27,7 +27,25 @@ export const apiFetch = (path, options = {}) => {
 
 export const readJson = async (response) => {
   const text = await response.text();
-  return text ? JSON.parse(text) : null;
+  if (!text) return null;
+
+  const contentType = response.headers.get("content-type") || "";
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    const trimmed = text.trimStart();
+    const isHtml = trimmed.startsWith("<") || trimmed.startsWith("<!");
+    const serverHint = isHtml
+      ? "Backend chưa chạy hoặc URL API không đúng. Hãy chạy TreMoc.exe / dotnet run rồi thử lại."
+      : text.slice(0, 160);
+
+    if (!contentType.includes("application/json") && isHtml) {
+      throw new Error(serverHint);
+    }
+
+    throw new Error("Phản hồi từ máy chủ không hợp lệ. " + serverHint);
+  }
 };
 
 // Upload files dạng multipart/form-data
