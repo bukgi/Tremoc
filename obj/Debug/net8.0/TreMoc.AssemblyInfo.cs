@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("f329fe89-e04e-44b4-95a2-85b2de446bc6")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("TreMoc")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e0b9c8b62035dc8335973cc5b1a09b7eb032693a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4a1aa4f410f85b7cb8b931c3f839ff6746fd837b")]
 [assembly: System.Reflection.AssemblyProductAttribute("TreMoc")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TreMoc")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

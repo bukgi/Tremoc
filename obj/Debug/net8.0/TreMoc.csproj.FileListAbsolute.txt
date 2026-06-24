@@ -144,3 +144,4 @@ D:\FPT\PRN222\TreMoc\TreMoc\obj\Debug\net8.0\TreMoc.pdb
 D:\FPT\PRN222\TreMoc\TreMoc\obj\Debug\net8.0\TreMoc.genruntimeconfig.cache
 D:\FPT\PRN222\TreMoc\TreMoc\obj\Debug\net8.0\ref\TreMoc.dll
 D:\FPT\PRN222\TreMoc\TreMoc\bin\Debug\net8.0\appsettings.Production.json
+D:\FPT\PRN222\TreMoc\TreMoc\bin\Debug\net8.0\client\vercel.json
