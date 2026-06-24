@@ -85,21 +85,6 @@ const AboutPage = () => {
           ))}
         </div>
 
-        {/* Stats */}
-        <div className="bg-mint rounded-3xl p-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center mb-12">
-          {[
-            { value: '2025', label: 'Năm thành lập' },
-            { value: '50+', label: 'Nghệ nhân hợp tác' },
-            { value: '5000+', label: 'Khách hàng tin tưởng' },
-            { value: '8', label: 'Dòng sản phẩm' },
-          ].map(({ value, label }) => (
-            <div key={label}>
-              <p className="text-3xl font-extrabold text-forest">{value}</p>
-              <p className="text-sm text-muted mt-1">{label}</p>
-            </div>
-          ))}
-        </div>
-
         <div className="text-center">
           <Link
             to="/"

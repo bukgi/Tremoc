@@ -65,7 +65,7 @@ const collections = [
     subtitle: "Cuối tuần trọn vẹn, không rác thải",
     mood: "Tự do, vui tươi, gần gũi thiên nhiên",
     desc: "Cuối tuần, xách balo lên và đi. Nhưng lần này, hãy để những chiếc cốc nhựa dùng một lần ở lại siêu thị. Bộ cốc tre và ống hút tre là người bạn đồng hành lý tưởng cho mọi buổi picnic, cắm trại hay tiệc nướng ngoài trời. Cốc tre nhẹ bất ngờ — cả bộ 4 chiếc chỉ nặng chưa đến 1kg. Ống hút tre gọn trong túi vải nhỏ. Sau khi dùng, rửa qua nước suối, lau khô, và tiếp tục hành trình. Bạn tận hưởng thiên nhiên mà không để lại dấu chân nhựa.",
-    image: "/images/lookbook-weekend.jpg",
+    image: "/images/bamboo_cups.png",
     products: ["Bộ 4 Cốc Tre", "Bộ 6 Ống Hút Tre", "Túi Vải Đựng Ống Hút"],
     tips: [
       "Mỗi người một cốc tre riêng — vừa vệ sinh vừa dễ phân biệt nhờ vân tre khác nhau trên từng chiếc",
