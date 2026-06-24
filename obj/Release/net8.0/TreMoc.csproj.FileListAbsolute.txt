@@ -143,3 +143,4 @@ D:\FPT\PRN222\TreMoc\TreMoc\bin\Release\net8.0\publish\TreMoc.deps.json
 D:\FPT\PRN222\TreMoc\TreMoc\bin\Release\net8.0\publish\TreMoc.runtimeconfig.json
 D:\FPT\PRN222\TreMoc\TreMoc\bin\Release\net8.0\publish\TreMoc.staticwebassets.endpoints.json
 D:\FPT\PRN222\TreMoc\TreMoc\bin\Release\net8.0\TreMoc.staticwebassets.runtime.json
+D:\FPT\PRN222\TreMoc\TreMoc\bin\Release\net8.0\appsettings.Production.json

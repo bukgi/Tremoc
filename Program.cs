@@ -54,7 +54,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 var clientDist = Path.Combine(builder.Environment.ContentRootPath, "client", "dist");
-var hasClientDist = Directory.Exists(clientDist);
 
 if (app.Environment.IsDevelopment())
 {
@@ -74,40 +73,48 @@ app.UseCors("AllowReactFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// API trước — không để SPA fallback nuốt request /api
+// API endpoints
 app.MapControllers();
 
-// Frontend React (chỉ phục vụ file tĩnh + fallback cho route SPA)
-if (hasClientDist)
+// SPA: serve React frontend
+if (Directory.Exists(clientDist))
 {
     var clientProvider = new PhysicalFileProvider(clientDist);
 
-    app.UseDefaultFiles(new DefaultFilesOptions
-    {
-        FileProvider = clientProvider,
-        RequestPath = ""
-    });
-
+    // Serve static assets (JS, CSS, images) from client/dist first
     app.UseStaticFiles(new StaticFileOptions
     {
         FileProvider = clientProvider,
         RequestPath = ""
     });
-
-    app.MapFallback(async context =>
-    {
-        if (context.Request.Path.StartsWithSegments("/api"))
-        {
-            context.Response.StatusCode = StatusCodes.Status404NotFound;
-            context.Response.ContentType = "application/json; charset=utf-8";
-            await context.Response.WriteAsJsonAsync(new { message = "API endpoint không tồn tại." });
-            return;
-        }
-
-        context.Response.ContentType = "text/html; charset=utf-8";
-        await context.Response.SendFileAsync(Path.Combine(clientDist, "index.html"));
-    });
 }
+
+// SPA fallback: tất cả route không phải API, không phải file tĩnh → index.html
+app.MapFallback(async context =>
+{
+    // API 404 trả JSON
+    if (context.Request.Path.StartsWithSegments("/api"))
+    {
+        context.Response.StatusCode = StatusCodes.Status404NotFound;
+        context.Response.ContentType = "application/json; charset=utf-8";
+        await context.Response.WriteAsJsonAsync(new { message = "API endpoint không tồn tại." });
+        return;
+    }
+
+    // Nếu có file index.html thì trả SPA, nếu không thì trả thông báo
+    var indexPath = Path.Combine(clientDist, "index.html");
+    if (File.Exists(indexPath))
+    {
+        context.Response.ContentType = "text/html; charset=utf-8";
+        await context.Response.SendFileAsync(indexPath);
+    }
+    else
+    {
+        context.Response.StatusCode = StatusCodes.Status404NotFound;
+        context.Response.ContentType = "text/html; charset=utf-8";
+        await context.Response.WriteAsync("<!DOCTYPE html><html><head><meta charset='utf-8'><title>Tre Mộc</title></head><body style='font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f5f5f0;color:#2d5016'><div style='text-align:center'><h1>🌿 Tre Mộc</h1><p>Frontend chưa được build. Vui lòng chạy:</p><pre style='background:#e8e8e0;padding:12px;border-radius:8px'>cd client && npm run build</pre></div></body></html>");
+    }
+});
 
 // Tự tạo DB + seed khi deploy lần đầu
 using (var scope = app.Services.CreateScope())
