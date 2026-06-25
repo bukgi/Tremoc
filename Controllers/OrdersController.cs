@@ -139,8 +139,8 @@ namespace TreMoc.Controllers
                 {
                     // Atomic update: chỉ trừ khi còn đủ hàng
                     var rowsAffected = await _context.Database.ExecuteSqlRawAsync(
-                        "UPDATE Products SET StockQuantity = StockQuantity - {0} WHERE Id = {1} AND StockQuantity >= {0}",
-                        item.Quantity, item.ProductId
+                        "UPDATE \"Products\" SET \"StockQuantity\" = \"StockQuantity\" - {0} WHERE \"Id\" = {1} AND \"StockQuantity\" >= {2}",
+                        item.Quantity, item.ProductId, item.Quantity
                     );
 
                     if (rowsAffected == 0)
