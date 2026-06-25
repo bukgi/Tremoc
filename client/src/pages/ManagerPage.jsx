@@ -25,6 +25,7 @@ import {
   Circle,
 } from "lucide-react";
 import { apiFetch, uploadFiles } from "../lib/api";
+import { useAuth } from "../context/AuthContext";
 
 const STATUS_STEPS = [
   { key: "Pending", label: "Chờ xác nhận", icon: Clock },
@@ -36,6 +37,7 @@ const STATUS_STEPS = [
 const STATUS_INDEX = Object.fromEntries(STATUS_STEPS.map((s, i) => [s.key, i]));
 
 const ManagerPage = () => {
+  const { user: currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const [orders, setOrders] = useState([]);
   const [users, setUsers] = useState([]);
@@ -126,22 +128,22 @@ const ManagerPage = () => {
     }
   };
 
-  const handleUpdateUserRole = async (userId, newRole) => {
+  const handleToggleUserStatus = async (userId, newIsActive) => {
     setError("");
     setSuccessMsg("");
     try {
-      const res = await apiFetch(`/api/users/${userId}/role`, {
+      const res = await apiFetch(`/api/users/${userId}/status`, {
         method: "PUT",
-        body: JSON.stringify({ role: newRole }),
+        body: JSON.stringify({ isActive: newIsActive }),
       });
       const data = await res.json();
       if (!res.ok)
-        throw new Error(data.message || "Lỗi cập nhật vai trò người dùng");
+        throw new Error(data.message || "Lỗi cập nhật trạng thái người dùng");
 
-      setSuccessMsg(`Đã cập nhật vai trò người dùng thành công.`);
+      setSuccessMsg(newIsActive ? "Đã mở khóa tài khoản thành công." : "Đã khóa tài khoản thành công.");
       // Update local state
       setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u)),
+        prev.map((u) => (u.id === userId ? { ...u, isActive: newIsActive } : u)),
       );
       setTimeout(() => setSuccessMsg(""), 4000);
     } catch (err) {
@@ -870,7 +872,7 @@ const ManagerPage = () => {
         {activeTab === "users" && (
           <div className="space-y-4 animate-fadeIn">
             <h3 className="font-bold text-slate-dark text-lg border-b border-border pb-3">
-              Phân quyền & Người dùng
+              Quản lý tài khoản & Người dùng
             </h3>
             <div className="overflow-x-auto scrollbar-thin">
               <table className="w-full text-left text-sm border-collapse">
@@ -880,7 +882,7 @@ const ManagerPage = () => {
                     <th className="p-4">Họ và Tên</th>
                     <th className="p-4">Email</th>
                     <th className="p-4">Số Điện Thoại</th>
-                    <th className="p-4">Vai Trò</th>
+                    <th className="p-4">Trạng Thái</th>
                     <th className="p-4">Ngày Tạo</th>
                     <th className="p-4 text-center">Hành Động</th>
                   </tr>
@@ -894,31 +896,35 @@ const ManagerPage = () => {
                       <td className="p-4 text-muted">{user.phone || "N/A"}</td>
                       <td className="p-4">
                         <span
-                          className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${user.role === "Manager" ? "bg-forest/10 text-forest" : "bg-gray-100 text-gray-700"}`}
+                          className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${
+                            user.isActive
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                              : "bg-rose-50 text-rose-700 border border-rose-200"
+                          }`}
                         >
-                          {user.role}
+                          {user.isActive ? "Hoạt động" : "Đã khóa"}
                         </span>
                       </td>
                       <td className="p-4 text-xs text-muted">
                         {new Date(user.createdAt).toLocaleDateString("vi-VN")}
                       </td>
                       <td className="p-4 text-center">
-                        <button
-                          onClick={() =>
-                            handleUpdateUserRole(
-                              user.id,
-                              user.role === "Manager" ? "Customer" : "Manager",
-                            )
-                          }
-                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
-                            user.role === "Manager"
-                              ? "bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100"
-                              : "bg-forest/5 border-forest/20 text-forest hover:bg-forest/10"
-                          }`}
-                        >
-                          Gán quyền{" "}
-                          {user.role === "Manager" ? "Customer" : "Manager"}
-                        </button>
+                        {currentUser?.id === user.id ? (
+                          <span className="text-xs text-muted italic">Tài khoản của bạn</span>
+                        ) : (
+                          <button
+                            onClick={() =>
+                              handleToggleUserStatus(user.id, !user.isActive)
+                            }
+                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
+                              user.isActive
+                                ? "bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100"
+                                : "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
+                            }`}
+                          >
+                            {user.isActive ? "Khóa tài khoản" : "Kích hoạt"}
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}

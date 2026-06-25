@@ -81,6 +81,11 @@ namespace TreMoc.Controllers
                 return Unauthorized(new { message = "Email hoặc mật khẩu không chính xác." });
             }
 
+            if (!user.IsActive)
+            {
+                return BadRequest(new { message = "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên." });
+            }
+
             var token = GenerateJwtToken(user);
             return Ok(new { token, user = new { id = user.Id, name = user.Name, email = user.Email, phone = user.Phone, role = user.Role } });
         }

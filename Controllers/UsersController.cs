@@ -30,6 +30,7 @@ namespace TreMoc.Controllers
                     u.Email,
                     u.Phone,
                     u.Role,
+                    u.IsActive,
                     u.CreatedAt
                 })
                 .ToListAsync();
@@ -37,37 +38,32 @@ namespace TreMoc.Controllers
             return Ok(users);
         }
 
-        public class UpdateRoleRequest
+        public class UpdateStatusRequest
         {
-            public string Role { get; set; } = string.Empty;
+            public bool IsActive { get; set; }
         }
 
-        // PUT: api/users/{id}/role
-        [HttpPut("{id}/role")]
-        public async Task<IActionResult> UpdateUserRole(int id, [FromBody] UpdateRoleRequest request)
+        // PUT: api/users/{id}/status
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateUserStatus(int id, [FromBody] UpdateStatusRequest request)
         {
-            if (request.Role != "Customer" && request.Role != "Manager")
-            {
-                return BadRequest(new { message = "Vai trò không hợp lệ. Chỉ chấp nhận Customer hoặc Manager." });
-            }
-
             var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound(new { message = "Không tìm thấy người dùng." });
             }
 
-            // Prevent self-role modification (safety check)
+            // Ngăn người dùng tự khóa tài khoản của chính mình
             if (UserClaimsHelper.TryGetUserId(User, out int currentUserId) && currentUserId == id)
             {
-                return BadRequest(new { message = "Bạn không thể tự thay đổi vai trò của chính mình." });
+                return BadRequest(new { message = "Bạn không thể tự khóa tài khoản của chính mình." });
             }
 
-            user.Role = request.Role;
+            user.IsActive = request.IsActive;
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Cập nhật vai trò thành công.", role = user.Role });
+            return Ok(new { message = "Cập nhật trạng thái tài khoản thành công.", isActive = user.IsActive });
         }
     }
 }

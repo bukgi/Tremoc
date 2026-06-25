@@ -1,0 +1,19 @@
+# --- .NET & C# ignores ---
+bin/
+obj/
+publish/
+*.user
+.vs/
+.idea/
+
+# --- SQLite database files ---
+*.db
+*.db-shm
+*.db-wal
+
+# --- React Frontend ignores ---
+client/node_modules/
+client/dist/
+.env
+.env.local
+.env.*.local
