@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // 1. Database Context
 builder.Services.AddDbContext<TreMocDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // 2. JWT Settings (hỗ trợ override bằng biến môi trường)
 var jwtKey = builder.Configuration["JwtSettings:Key"] ?? "ThisIsASecretKeyForTreMocApplicationWhichNeedsToBeAtLeast32BytesLong!";

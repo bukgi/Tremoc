@@ -5,6 +5,7 @@ publish/
 *.user
 .vs/
 .idea/
+appsettings.Development.json
 
 # --- SQLite database files ---
 *.db

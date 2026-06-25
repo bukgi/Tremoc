@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TreMoc.Data;
 
 #nullable disable
@@ -11,44 +12,50 @@ using TreMoc.Data;
 namespace TreMoc.Migrations
 {
     [DbContext(typeof(TreMocDbContext))]
-    [Migration("20260610070417_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260625124311_InitialPostgresCreate")]
+    partial class InitialPostgresCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.4");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("TreMoc.Models.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("OrderDate")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ShippingAddress")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<decimal>("ShippingFee")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.Property<string>("ShippingProvince")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<decimal>("TotalAmount")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -61,19 +68,21 @@ namespace TreMoc.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("OrderId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
@@ -88,45 +97,47 @@ namespace TreMoc.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Category")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Image")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ImagesJson")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ImpactCo2")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ImpactPlastic")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ImpactWater")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("InStock")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("StockQuantity")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -143,23 +154,23 @@ namespace TreMoc.Migrations
                             ImpactCo2 = "25g",
                             ImpactPlastic = "50g",
                             ImpactWater = "100ml",
-                            InStock = true,
                             Name = "Khay Trà Tre",
-                            Price = 280000m
+                            Price = 280000m,
+                            StockQuantity = 10
                         },
                         new
                         {
                             Id = 2,
                             Category = "Đồ gia dụng",
                             Description = "Bộ 4 cốc tre thủ công, mỗi chiếc đều là tác phẩm độc đáo. Dung tích 250ml, an toàn cho sức khỏe.",
-                            Image = "/images/bamboo_cups.png",
-                            ImagesJson = "[\"/images/bamboo_cups.png\",\"/images/bamboo_tea_tray.png\",\"/images/bamboo_cutting_board.png\"]",
+                            Image = "/images/products/cup_logo.jpg",
+                            ImagesJson = "[\"/images/products/cup_logo.jpg\",\"/images/products/cup_plain.jpg\",\"/images/products/cup_bottom.jpg\",\"/images/products/cup_close.jpg\",\"/images/products/cup_logo_2.jpg\"]",
                             ImpactCo2 = "40g",
                             ImpactPlastic = "80g",
                             ImpactWater = "200ml",
-                            InStock = true,
                             Name = "Bộ Cốc Tre",
-                            Price = 195000m
+                            Price = 195000m,
+                            StockQuantity = 15
                         },
                         new
                         {
@@ -171,9 +182,9 @@ namespace TreMoc.Migrations
                             ImpactCo2 = "15g",
                             ImpactPlastic = "30g",
                             ImpactWater = "50ml",
-                            InStock = true,
                             Name = "Hộp Đựng Bút Tre",
-                            Price = 150000m
+                            Price = 150000m,
+                            StockQuantity = 8
                         },
                         new
                         {
@@ -185,9 +196,9 @@ namespace TreMoc.Migrations
                             ImpactCo2 = "60g",
                             ImpactPlastic = "120g",
                             ImpactWater = "300ml",
-                            InStock = true,
                             Name = "Đèn Tre Trang Trí",
-                            Price = 420000m
+                            Price = 420000m,
+                            StockQuantity = 1
                         },
                         new
                         {
@@ -199,9 +210,9 @@ namespace TreMoc.Migrations
                             ImpactCo2 = "100g",
                             ImpactPlastic = "200g",
                             ImpactWater = "500ml",
-                            InStock = true,
                             Name = "Thớt Tre Cao Cấp",
-                            Price = 220000m
+                            Price = 220000m,
+                            StockQuantity = 12
                         },
                         new
                         {
@@ -213,9 +224,9 @@ namespace TreMoc.Migrations
                             ImpactCo2 = "8g",
                             ImpactPlastic = "15g",
                             ImpactWater = "30ml",
-                            InStock = true,
                             Name = "Bàn Chải Tre",
-                            Price = 45000m
+                            Price = 45000m,
+                            StockQuantity = 25
                         },
                         new
                         {
@@ -227,9 +238,9 @@ namespace TreMoc.Migrations
                             ImpactCo2 = "45g",
                             ImpactPlastic = "90g",
                             ImpactWater = "150ml",
-                            InStock = true,
                             Name = "Giỏ Tre Đan",
-                            Price = 350000m
+                            Price = 350000m,
+                            StockQuantity = 5
                         },
                         new
                         {
@@ -241,9 +252,9 @@ namespace TreMoc.Migrations
                             ImpactCo2 = "12g",
                             ImpactPlastic = "25g",
                             ImpactWater = "40ml",
-                            InStock = true,
                             Name = "Bộ Đũa Tre",
-                            Price = 85000m
+                            Price = 85000m,
+                            StockQuantity = 20
                         });
                 });
 
@@ -251,30 +262,35 @@ namespace TreMoc.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
