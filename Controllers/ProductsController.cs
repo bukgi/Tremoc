@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using TreMoc.Data;
 using TreMoc.Models;
 
@@ -10,10 +11,12 @@ namespace TreMoc.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly TreMocDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public ProductsController(TreMocDbContext context)
+        public ProductsController(TreMocDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -94,7 +97,7 @@ namespace TreMoc.Controllers
             public int StockQuantity { get; set; }
         }
 
-        // Endpoint upload ảnh sản phẩm
+        // Endpoint upload ảnh sản phẩm lên Supabase Storage
         [HttpPost("upload")]
         [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Manager")]
         public async Task<IActionResult> UploadImages([FromForm] List<IFormFile> files)
@@ -102,14 +105,21 @@ namespace TreMoc.Controllers
             if (files == null || files.Count == 0)
                 return BadRequest(new { message = "Vui lòng chọn ít nhất một ảnh." });
 
+            var supabaseUrl = _configuration["Supabase:Url"] ?? "https://vinluzimbeiotfjypkuk.supabase.co";
+            var supabaseApiKey = _configuration["Supabase:ApiKey"];
+
+            if (string.IsNullOrEmpty(supabaseApiKey))
+            {
+                return BadRequest(new { message = "Chưa cấu hình API Key của Supabase (Supabase:ApiKey) trong appsettings.json." });
+            }
+
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp", ".gif" };
             var maxFileSize = 5 * 1024 * 1024; // 5MB
             var uploadedUrls = new List<string>();
 
-            // Đường dẫn lưu ảnh: wwwroot/images/products/
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "products");
-            if (!Directory.Exists(uploadsFolder))
-                Directory.CreateDirectory(uploadsFolder);
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {supabaseApiKey}");
+            client.DefaultRequestHeaders.Add("apikey", supabaseApiKey);
 
             foreach (var file in files)
             {
@@ -125,14 +135,32 @@ namespace TreMoc.Controllers
 
                 // Tạo tên file unique để tránh trùng
                 var uniqueFileName = $"{Guid.NewGuid():N}{ext}";
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                // Endpoint upload của Supabase Storage: POST /storage/v1/object/{bucket}/{path}
+                var requestUrl = $"{supabaseUrl}/storage/v1/object/products/{uniqueFileName}";
+
+                try
                 {
-                    await file.CopyToAsync(stream);
-                }
+                    using var content = new StreamContent(file.OpenReadStream());
+                    content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
 
-                uploadedUrls.Add($"/images/products/{uniqueFileName}");
+                    var response = await client.PostAsync(requestUrl, content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Link ảnh công khai để xem từ mọi nơi
+                        var publicUrl = $"{supabaseUrl}/storage/v1/object/public/products/{uniqueFileName}";
+                        uploadedUrls.Add(publicUrl);
+                    }
+                    else
+                    {
+                        var errorMsg = await response.Content.ReadAsStringAsync();
+                        return StatusCode(500, new { message = $"Lỗi khi upload ảnh '{file.FileName}' lên Supabase.", details = errorMsg });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, new { message = $"Lỗi kết nối khi upload ảnh '{file.FileName}' lên Supabase.", details = ex.Message });
+                }
             }
 
             return Ok(new { urls = uploadedUrls });
