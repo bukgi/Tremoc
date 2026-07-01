@@ -56,24 +56,24 @@ const ContactPage = () => {
             ))}
 
             {/* Mạng xã hội */}
-            <div className="flex items-center gap-3 pl-[60px] pt-1">
+            <div className="flex items-center gap-4 pl-[60px] pt-2">
               <a
                 href="https://www.facebook.com/tremoc4"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-xl bg-mint hover:bg-forest flex items-center justify-center text-forest hover:text-white transition-all shadow-sm"
+                className="w-11 h-11 rounded-xl bg-mint hover:bg-forest flex items-center justify-center text-forest hover:text-white transition-all hover:scale-110 duration-200 shadow-sm"
                 title="Facebook"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
               </a>
               <a
                 href="https://www.tiktok.com/@tremoc.official?is_from_webapp=1&sender_device=pc"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-xl bg-mint hover:bg-forest flex items-center justify-center text-forest hover:text-white transition-all shadow-sm"
+                className="w-11 h-11 rounded-xl bg-mint hover:bg-forest flex items-center justify-center text-forest hover:text-white transition-all hover:scale-110 duration-200 shadow-sm"
                 title="TikTok"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
               </a>
             </div>
           </div>
