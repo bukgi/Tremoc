@@ -40,9 +40,9 @@ const ContactPage = () => {
 
           <div className="space-y-5 mb-8">
             {[
-              { icon: MapPin, title: 'Địa chỉ', content: '123 Đường Láng, Đống Đa, Hà Nội, Việt Nam' },
-              { icon: Phone, title: 'Điện thoại', content: '0123 456 789 / 024 3456 7890' },
-              { icon: Mail, title: 'Email', content: 'hello@treviet.vn / support@treviet.vn' },
+              { icon: MapPin, title: 'Địa chỉ', content: 'Hòa Lạc, Hanoi, Vietnam' },
+              { icon: Phone, title: 'Điện thoại', content: '097 984 55 96' },
+              { icon: Mail, title: 'Email', content: 'tremoc4@gmail.com' },
             ].map(({ icon: Icon, title, content }) => (
               <div key={title} className="flex items-start gap-4">
                 <div className="w-11 h-11 rounded-xl bg-mint flex items-center justify-center shrink-0">
@@ -54,6 +54,28 @@ const ContactPage = () => {
                 </div>
               </div>
             ))}
+
+            {/* Mạng xã hội */}
+            <div className="flex items-center gap-3 pl-[60px] pt-1">
+              <a
+                href="https://www.facebook.com/tremoc4"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-mint hover:bg-forest flex items-center justify-center text-forest hover:text-white transition-all shadow-sm"
+                title="Facebook"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              </a>
+              <a
+                href="https://www.tiktok.com/@tremoc.official?is_from_webapp=1&sender_device=pc"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-mint hover:bg-forest flex items-center justify-center text-forest hover:text-white transition-all shadow-sm"
+                title="TikTok"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+              </a>
+            </div>
           </div>
 
           {/* Working Hours */}

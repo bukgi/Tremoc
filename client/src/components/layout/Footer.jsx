@@ -66,15 +66,35 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-start gap-2.5">
                 <MapPin size={16} className="text-forest-light mt-0.5 shrink-0" />
-                <span className="text-sm text-gray-400">123 Đường Láng, Đống Đa, Hà Nội</span>
+                <span className="text-sm text-gray-400">Hòa Lạc, Hanoi, Vietnam</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone size={16} className="text-forest-light shrink-0" />
-                <span className="text-sm text-gray-400">0123 456 789</span>
+                <span className="text-sm text-gray-400">097 984 55 96</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail size={16} className="text-forest-light shrink-0" />
-                <span className="text-sm text-gray-400">hello@treviet.vn</span>
+                <span className="text-sm text-gray-400">tremoc4@gmail.com</span>
+              </li>
+              <li className="flex items-center gap-3 pt-1 pl-[26px]">
+                <a
+                  href="https://www.facebook.com/tremoc4"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-forest-light transition-colors"
+                  title="Facebook"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                </a>
+                <a
+                  href="https://www.tiktok.com/@tremoc.official?is_from_webapp=1&sender_device=pc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-forest-light transition-colors"
+                  title="TikTok"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+                </a>
               </li>
             </ul>
           </div>
